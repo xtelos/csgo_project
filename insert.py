@@ -42,7 +42,29 @@ def insertIntoMatches():
 
 def insertIntoMaps():
     cursor.execute('USE csgo;')
+    with open('csgo_data/picks.csv') as csvFile:
+        csvFile.readline()
+        reader = csv.reader(csvFile)
+        mapDictionary = {}
+        invalidMaps = []
+        for row in reader:
+            map = row[16]
+            if map in mapDictionary:
+                mapDictionary[map] += 1
+            else:
+                mapDictionary[map] = 1
 
+        for key, value in mapDictionary.items():
+            if value < 5:
+                invalidMaps.append(key)
+
+        for x in invalidMaps:
+            del mapDictionary[x]
+
+        for mapName in mapDictionary:
+                cursor.execute('INSERT INTO maps VALUES("{}",{},{});'.format(mapName, mapDictionary[mapName], 0))
+
+        conn.commit()
 
 def insertIntoPlayerAnalytics():
     cursor.execute('USE csgo;')
@@ -52,4 +74,5 @@ if __name__ == '__main__':
     conn, cursor = connectToMysql()
     insertIntoPlayers()
     insertIntoMatches()
+    insertIntoMaps()
 

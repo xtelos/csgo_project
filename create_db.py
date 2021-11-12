@@ -26,7 +26,7 @@ def create():
     cursor.execute('DROP TABLE IF EXISTS playerAnalytics;')
 
     cursor.execute('CREATE TABLE players (name VARCHAR(255), '
-                   'team VARCHAR(255), country VARCHAR(255), eventID INT, eventName VARCHAR(255));')
+                   'team VARCHAR(255), country VARCHAR(255), eventID INT);')
     cursor.execute('CREATE TABLE events (eventID INT, eventName VARCHAR(255));')
     cursor.execute('CREATE TABLE matches (date DATE, matchID INT, eventID VARCHAR(255), '
                    'team1 VARCHAR(255), team2 VARCHAR(255), bestOf INT, winner VARCHAR(255));')

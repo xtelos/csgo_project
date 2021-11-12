@@ -12,8 +12,7 @@ def insertIntoPlayers():
             team = row[2]
             country = row[4]
             eventID = row[7]
-            eventName = row[8]
-            cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}","{}");'.format(playerName, team, country, eventID, eventName))
+            cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}");'.format(playerName, team, country, eventID))
         conn.commit()
 
 def insertIntoMatches():
@@ -92,13 +91,27 @@ def insertIntoMaps():
 
         conn.commit()
 
+
+def insertIntoEvents():
+    cursor.execute('USE csgo;')
+    with open('csgo_data/players.csv') as csvFile:
+        csvFile.readline()
+        reader = csv.reader(csvFile)
+        for row in reader:
+            eventID = row[7]
+            eventName = row[8]
+            if eventID not in eventsSet:
+                eventsSet.add(eventID)
+                cursor.execute('INSERT INTO events VALUES("{}","{}");'.format(eventID, eventName))
+        conn.commit()
+
+
 def insertIntoPlayerAnalytics():
     cursor.execute('USE csgo;')
 
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-    insertIntoPlayers()
-    insertIntoMatches()
-    insertIntoMaps()
+    eventsSet = set()
+    insertIntoEvents()
 

@@ -98,7 +98,7 @@ def insertIntoPlayerAnalytics():
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-   # insertIntoPlayers()
-   # insertIntoMatches()
+    insertIntoPlayers()
+    insertIntoMatches()
     insertIntoMaps()
 

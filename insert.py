@@ -16,7 +16,6 @@ def insertIntoPlayers():
             cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}","{}");'.format(playerName, team, country, eventID, eventName))
         conn.commit()
 
-
 def insertIntoMatches():
     cursor.execute('USE csgo;')
     with open('csgo_data/results.csv') as csvFile:
@@ -39,30 +38,57 @@ def insertIntoMatches():
             cursor.execute('INSERT INTO matches VALUES("{}","{}","{}","{}","{}", "{}", "{}");'.format(date, matchID, eventID, team1, team2, bestOf, winner))
         conn.commit()
 
+def addToDict(name, dict):
+    if name in dict:
+        dict[name] += 1
+    else:
+        dict[name] = 1
+
+def addToInvalidList(invalid_list, map_dict):
+    for key, value in map_dict.items():
+        if key == '0.0':
+            invalid_list.append(key)
+        if value < 5:
+            invalid_list.append(key)
 
 def insertIntoMaps():
     cursor.execute('USE csgo;')
     with open('csgo_data/picks.csv') as csvFile:
         csvFile.readline()
         reader = csv.reader(csvFile)
-        mapDictionary = {}
+        banned_mapsDict = {}
+        picked_mapsDict = {}
         invalidMaps = []
+        invalid_banned_maps = []
         for row in reader:
-            map = row[16]
-            if map in mapDictionary:
-                mapDictionary[map] += 1
-            else:
-                mapDictionary[map] = 1
+            t1_ban_1 = row[8]
+            t1_ban_2 = row[9]
+            t1_ban_3 = row[10]
+            t2_ban_1 = row[11]
+            t2_ban_2 = row[12]
+            t2_ban_3 = row[13]
+            bans_list = [t1_ban_1, t1_ban_2, t1_ban_3, t2_ban_1, t2_ban_2, t2_ban_3]
+            t1_picked = row[14]
+            t2_picked = row[15]
+            pick_list = [t1_picked, t2_picked]
 
-        for key, value in mapDictionary.items():
-            if value < 5:
-                invalidMaps.append(key)
+            for map_ban in bans_list:
+                addToDict(map_ban, banned_mapsDict)
+            for map_pick in pick_list:
+                addToDict(map_pick, picked_mapsDict)
 
-        for x in invalidMaps:
-            del mapDictionary[x]
+        addToInvalidList(invalid_banned_maps, banned_mapsDict)
+        addToInvalidList(invalidMaps, picked_mapsDict)
 
-        for mapName in mapDictionary:
-                cursor.execute('INSERT INTO maps VALUES("{}",{},{});'.format(mapName, mapDictionary[mapName], 0))
+        for invalid_map in invalid_banned_maps:
+            del banned_mapsDict[invalid_map]
+
+        for invalid_map in invalidMaps:
+            del picked_mapsDict[invalid_map]
+
+        for mapName in picked_mapsDict:
+            cursor.execute('INSERT INTO maps VALUES("{}",{},{},{},{});'.format(
+                mapName, 0.0, 0.0, picked_mapsDict[mapName], banned_mapsDict[mapName]))
 
         conn.commit()
 
@@ -72,7 +98,7 @@ def insertIntoPlayerAnalytics():
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-    insertIntoPlayers()
-    insertIntoMatches()
+   # insertIntoPlayers()
+   # insertIntoMatches()
     insertIntoMaps()
 

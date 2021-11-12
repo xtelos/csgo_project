@@ -30,14 +30,13 @@ the related links section.
   - Gives a summary of a particular player's performance for a particular match
 
 ### Interesting Challenges:
-#####Calculating Picks / Bans:
-We found a number of errors in the dataset where maps were not listed correctly, 
-such as a few cases where a player name was in place of a map name (which we 
-assumed as an error of data entry). We solved this issue by collecting information
-across only the maps that were in active competitive rotation during the time
-period.
+##### Calculating Picks / Bans:
+When a team wins a match 2-0, they will not go on to play a 3rd map. In these cases,
+the 3rd pick and ban column in the CSV (t1_removed_3, t2_removed_3) is 
+given '0.0' to represent a map not being picked. To get around this, we simply removed any keys of '0.0' 
+from the map dictionaries used. 
 
-#####Calculating the Number of Maps Played in a Match (bestOf):
+##### Calculating the Number of Maps Played in a Match (bestOf):
 We also found that the results of matches were incorrect in that if only 1 map was played those
 results were listed as a pair (5, 16) for example, which would mean team 1 had won 5 maps, and team 2 had won 16 (which is not correct).
 We solved this issue by combining the wins for both teams to equal the maps

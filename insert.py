@@ -12,8 +12,7 @@ def insertIntoPlayers():
             team = row[2]
             country = row[4]
             eventID = row[7]
-            eventName = row[8]
-            cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}","{}");'.format(playerName, team, country, eventID, eventName))
+            cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}");'.format(playerName, team, country, eventID))
         conn.commit()
 
 def insertIntoMatches():
@@ -86,9 +85,22 @@ def insertIntoMaps():
         for invalid_map in invalidMaps:
             del picked_mapsDict[invalid_map]
 
+        total_count_picked = sum(picked_mapsDict.values())
+        total_count_banned = sum(banned_mapsDict.values())
+
+        pickRate = {}
+        for mapName in picked_mapsDict:
+            pickRate[mapName] = round((picked_mapsDict[mapName] / total_count_picked), 3)
+
+        banRate = {}
+        for mapName in banned_mapsDict:
+            banRate[mapName] = round((banned_mapsDict[mapName] / total_count_banned), 3)
+
+        print(pickRate)
+
         for mapName in picked_mapsDict:
             cursor.execute('INSERT INTO maps VALUES("{}",{},{},{},{});'.format(
-                mapName, 0.0, 0.0, picked_mapsDict[mapName], banned_mapsDict[mapName]))
+                mapName, pickRate[mapName], banRate[mapName], picked_mapsDict[mapName], banned_mapsDict[mapName]))
 
         conn.commit()
 
@@ -98,7 +110,7 @@ def insertIntoPlayerAnalytics():
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-    insertIntoPlayers()
-    insertIntoMatches()
+   # insertIntoPlayers()
+    #insertIntoMatches()
     insertIntoMaps()
 

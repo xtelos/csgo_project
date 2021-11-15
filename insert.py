@@ -102,8 +102,6 @@ def insertIntoMaps():
         for mapName in banned_mapsDict:
             banRate[mapName] = round((banned_mapsDict[mapName] / total_count_banned), 3)
 
-        print(pickRate)
-
         for mapName in picked_mapsDict:
             cursor.execute('INSERT INTO maps VALUES("{}",{},{},{},{});'.format(
                 mapName, pickRate[mapName], banRate[mapName], picked_mapsDict[mapName], banned_mapsDict[mapName]))
@@ -118,7 +116,7 @@ if __name__ == '__main__':
     conn, cursor = connectToMysql()
     create(conn, cursor)
     eventSet = set()
-    #insertIntoPlayers()
-    #insertIntoMatches()
+    insertIntoPlayers()
+    insertIntoMatches()
     insertIntoMaps()
 

@@ -58,7 +58,7 @@ def insertIntoMaps():
         reader = csv.reader(csvFile)
         banned_mapsDict = {}
         picked_mapsDict = {}
-        invalid_picked_maps = []
+        invalidMaps = []
         invalid_banned_maps = []
         for row in reader:
             t1_ban_1 = row[8]
@@ -78,28 +78,17 @@ def insertIntoMaps():
                 addToDict(map_pick, picked_mapsDict)
 
         addToInvalidList(invalid_banned_maps, banned_mapsDict)
-        addToInvalidList(invalid_picked_maps, picked_mapsDict)
+        addToInvalidList(invalidMaps, picked_mapsDict)
 
         for invalid_map in invalid_banned_maps:
             del banned_mapsDict[invalid_map]
 
-        for invalid_map in invalid_picked_maps:
+        for invalid_map in invalidMaps:
             del picked_mapsDict[invalid_map]
-
-        total_count_picked = sum(picked_mapsDict.values())
-        total_count_banned = sum(banned_mapsDict.values())
-
-        pickRate = {}
-        for mapName in picked_mapsDict:
-            pickRate[mapName] = round((picked_mapsDict[mapName] / total_count_picked), 3)
-
-        banRate = {}
-        for mapName in banned_mapsDict:
-            banRate[mapName] = round((banned_mapsDict[mapName] / total_count_banned), 3)
 
         for mapName in picked_mapsDict:
             cursor.execute('INSERT INTO maps VALUES("{}",{},{},{},{});'.format(
-                mapName, pickRate[mapName], banRate[mapName], picked_mapsDict[mapName], banned_mapsDict[mapName]))
+                mapName, 0.0, 0.0, picked_mapsDict[mapName], banned_mapsDict[mapName]))
 
         conn.commit()
 
@@ -109,7 +98,7 @@ def insertIntoPlayerAnalytics():
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-   # insertIntoPlayers()
-   # insertIntoMatches()
+    insertIntoPlayers()
+    insertIntoMatches()
     insertIntoMaps()
 

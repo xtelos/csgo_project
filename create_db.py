@@ -15,7 +15,7 @@ def connectToMysql():
     return conn, cursor
 
 
-def create():
+def create(conn, cursor):
     cursor.execute('CREATE DATABASE IF NOT EXISTS csgo;')
     cursor.execute('USE csgo;')
 

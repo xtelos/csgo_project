@@ -1,4 +1,5 @@
 from create_db import connectToMysql
+from create_db import create
 import csv
 
 
@@ -12,8 +13,13 @@ def insertIntoPlayers():
             team = row[2]
             country = row[4]
             eventID = row[7]
+            eventName = row[8]
+            if eventName not in eventSet:
+                eventSet.add(eventName)
+                cursor.execute('INSERT INTO events VALUES("{}", "{}");'.format(eventID, eventName))
             cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}");'.format(playerName, team, country, eventID))
         conn.commit()
+
 
 def insertIntoMatches():
     cursor.execute('USE csgo;')
@@ -110,7 +116,9 @@ def insertIntoPlayerAnalytics():
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
-   # insertIntoPlayers()
+    create(conn, cursor)
+    eventSet = set()
+    #insertIntoPlayers()
     #insertIntoMatches()
     insertIntoMaps()
 

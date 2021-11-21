@@ -43,6 +43,15 @@ We solved this issue by combining the wins for both teams to equal the maps
 played, and if it was higher than 5 (maximum number of maps possible),
 we then assumed it was only one map that had been played.
 
+##### Empty data for players.csv
+During some events, only 1-2 maps were played per match, leaving data for the remaining columns 
+(player stats regarding maps 2 and 3) empty. As a result, if maps 2 or 3 were not played during a match, 
+then the player stats for that match will be merely listed as 0.0.
+
+2015 missing chunks of data (kills, etc.) - investigate 
+
+##### Picks.csv ends in 2016, other CSVs end in 2015
+
 ### Relevant Sources and Libraries:
 - Kaggle Dataset on CSGO Professional Matches
   - https://www.kaggle.com/mateusdmachado/csgo-professional-matches?select=players.csv

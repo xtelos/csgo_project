@@ -49,6 +49,12 @@ def addToDict(name, dict):
     else:
         dict[name] = 1
 
+def addToKDDict(name, dict, value):
+    if name in dict:
+        dict[name] += value
+    else:
+        dict[name] = value
+
 def addToInvalidList(invalid_list, map_dict):
     for key, value in map_dict.items():
         if key == '0.0':
@@ -108,15 +114,41 @@ def insertIntoMaps():
 
         conn.commit()
 
-def insertIntoPlayerAnalytics():
-    cursor.execute('USE csgo;')
+def checkIfEmpty(value):
+    if value == '':
+        return 0
+    return int(float(value))
 
+def insertIntoPlayerAnalytics():
+    # add value "career_total_kills"
+    cursor.execute('USE csgo;')
+    with open('csgo_data/players.csv') as csvFile:
+        csvFile.readline()
+        reader = csv.reader(csvFile)
+        career_total_kills = {}
+        career_total_deaths = {}
+        for row in reader:
+            playerName = row[1]
+            matchID = row[6]
+            match_total_kills = checkIfEmpty(row[13])
+            match_total_deaths = checkIfEmpty(row[15])
+            map1_kills = checkIfEmpty(row[23])
+            map1_deaths = checkIfEmpty(row[25])
+            map2_kills = checkIfEmpty(row[33])
+            map2_deaths = checkIfEmpty(row[35])
+            map3_kills = checkIfEmpty(row[43])
+            map3_deaths = checkIfEmpty(row[45])
+
+            addToKDDict(playerName, career_total_kills, match_total_kills)
+            addToKDDict(playerName, career_total_deaths, match_total_deaths)
+
+        conn.commit()
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
     create(conn, cursor)
     eventSet = set()
-    insertIntoPlayers()
-    insertIntoMatches()
-    insertIntoMaps()
-
+    #insertIntoPlayers()
+    #insertIntoMatches()
+    #insertIntoMaps()
+    insertIntoPlayerAnalytics()

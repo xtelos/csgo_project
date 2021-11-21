@@ -23,7 +23,9 @@ def create(conn, cursor):
     cursor.execute('DROP TABLE IF EXISTS events;')
     cursor.execute('DROP TABLE IF EXISTS matches;')
     cursor.execute('DROP TABLE IF EXISTS maps;')
-    cursor.execute('DROP TABLE IF EXISTS playerAnalytics;')
+    cursor.execute('DROP TABLE IF EXISTS playerAnalyticsPerMatch;')
+    cursor.execute('DROP TABLE IF EXISTS playerAnalyticsOverall;')
+
 
     cursor.execute('CREATE TABLE players (name VARCHAR(255), '
                    'team VARCHAR(255), country VARCHAR(255), eventID INT);')

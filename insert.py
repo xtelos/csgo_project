@@ -24,11 +24,12 @@ def insertIntoPlayers():
             addToKDDict(playerName, career_total_deaths, match_total_deaths)
 
             cursor.execute('INSERT INTO playerAnalyticsPerMatch VALUES("{}", "{}", "{}", "{}");'.format(playerName, matchID, match_total_kills, match_total_deaths))
-            insertIntoOverallAnalytics(career_total_kills, career_total_deaths)
             if eventName not in eventSet:
                 eventSet.add(eventName)
                 cursor.execute('INSERT INTO events VALUES("{}", "{}");'.format(eventID, eventName))
             cursor.execute('INSERT INTO players VALUES("{}","{}","{}","{}");'.format(playerName, team, country, eventID))
+        insertIntoOverallAnalytics(career_total_kills, career_total_deaths)
+
         conn.commit()
 
 

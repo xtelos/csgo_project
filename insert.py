@@ -8,12 +8,23 @@ def insertIntoPlayers():
     with open('csgo_data/players.csv') as csvFile:
         csvFile.readline()
         reader = csv.reader(csvFile)
+        career_total_kills = {}
+        career_total_deaths = {}
         for row in reader:
             playerName = row[1]
             team = row[2]
             country = row[4]
             eventID = row[7]
             eventName = row[8]
+            matchID = row[6]
+            match_total_kills = checkIfEmpty(row[13])
+            match_total_deaths = checkIfEmpty(row[15])
+
+            addToKDDict(playerName, career_total_kills, match_total_kills)
+            addToKDDict(playerName, career_total_deaths, match_total_deaths)
+
+            cursor.execute('INSERT INTO playerAnalyticsPerMatch VALUES("{}", "{}", "{}", "{}");'.format(playerName, matchID, match_total_kills, match_total_deaths))
+            insertIntoOverallAnalytics(career_total_kills, career_total_deaths)
             if eventName not in eventSet:
                 eventSet.add(eventName)
                 cursor.execute('INSERT INTO events VALUES("{}", "{}");'.format(eventID, eventName))
@@ -43,11 +54,13 @@ def insertIntoMatches():
             cursor.execute('INSERT INTO matches VALUES("{}","{}","{}","{}","{}", "{}", "{}");'.format(date, matchID, eventID, team1, team2, bestOf, winner))
         conn.commit()
 
+
 def addToDict(name, dict):
     if name in dict:
         dict[name] += 1
     else:
         dict[name] = 1
+
 
 def addToKDDict(name, dict, value):
     if name in dict:
@@ -55,12 +68,14 @@ def addToKDDict(name, dict, value):
     else:
         dict[name] = value
 
+
 def addToInvalidList(invalid_list, map_dict):
     for key, value in map_dict.items():
         if key == '0.0':
             invalid_list.append(key)
         if value < 5:
             invalid_list.append(key)
+
 
 def insertIntoMaps():
     cursor.execute('USE csgo;')
@@ -114,41 +129,26 @@ def insertIntoMaps():
 
         conn.commit()
 
+
 def checkIfEmpty(value):
     if value == '':
         return 0
     return int(float(value))
 
-def insertIntoPlayerAnalytics():
-    # add value "career_total_kills"
-    cursor.execute('USE csgo;')
-    with open('csgo_data/players.csv') as csvFile:
-        csvFile.readline()
-        reader = csv.reader(csvFile)
-        career_total_kills = {}
-        career_total_deaths = {}
-        for row in reader:
-            playerName = row[1]
-            matchID = row[6]
-            match_total_kills = checkIfEmpty(row[13])
-            match_total_deaths = checkIfEmpty(row[15])
-            map1_kills = checkIfEmpty(row[23])
-            map1_deaths = checkIfEmpty(row[25])
-            map2_kills = checkIfEmpty(row[33])
-            map2_deaths = checkIfEmpty(row[35])
-            map3_kills = checkIfEmpty(row[43])
-            map3_deaths = checkIfEmpty(row[45])
 
-            addToKDDict(playerName, career_total_kills, match_total_kills)
-            addToKDDict(playerName, career_total_deaths, match_total_deaths)
+def insertIntoOverallAnalytics(career_total_kills, career_total_deaths):
+    for name in career_total_kills.keys():
+        totalMatchKills = career_total_kills[name]
+        totalMatchDeaths = career_total_deaths[name]
+        averageKD = totalMatchKills / totalMatchDeaths
+        cursor.execute('INSERT INTO playerAnalyticsOverall VALUES("{}", "{}")'.format(name, averageKD))
+    conn.commit()
 
-        conn.commit()
 
 if __name__ == '__main__':
     conn, cursor = connectToMysql()
     create(conn, cursor)
     eventSet = set()
-    #insertIntoPlayers()
-    #insertIntoMatches()
-    #insertIntoMaps()
-    insertIntoPlayerAnalytics()
+    insertIntoPlayers()
+    insertIntoMatches()
+    insertIntoMaps()

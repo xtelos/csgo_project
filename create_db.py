@@ -37,6 +37,6 @@ def create(conn, cursor):
     cursor.execute('CREATE TABLE playerAnalyticsPerMatch (playerName VARCHAR(255), '
                    'matchID INT, kills INT, deaths INT);')
     cursor.execute('CREATE TABLE playerAnalyticsOverall (playerName VARCHAR(255), '
-                   'kills INT, deaths INT);')
+                   'averageKD FLOAT);')
     conn.commit()
 

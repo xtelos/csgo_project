@@ -46,11 +46,13 @@ we then assumed it was only one map that had been played.
 ##### Empty data for players.csv
 During some events, only 1-2 maps were played per match, leaving data for the remaining columns 
 (player stats regarding maps 2 and 3) empty. As a result, if maps 2 or 3 were not played during a match, 
-then the player stats for that match will be merely listed as 0.0.
+then the player stats for those maps will be merely added as 0.
 
-2015 missing chunks of data (kills, etc.) - investigate 
+##### Earliest date varies per CSV
+The earliest date for every CSV is different. Economy.csv ends in 2017-04-04, picks ends in 2016-04-12, 
+players ends in 2015-10-07, and results ends in 2015-11-03. Therefore, for some matches 
+will be unable to be joined with entries from the other tables. 
 
-##### Picks.csv ends in 2016, other CSVs end in 2015
 
 ### Relevant Sources and Libraries:
 - Kaggle Dataset on CSGO Professional Matches
